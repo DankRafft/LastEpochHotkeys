@@ -2,148 +2,71 @@
 LAST EPOCH HOTKEYS
 an AutoHotkey script
 created by Dank Rafft
+
+; -< HOW TO USE >-
+
+Upon the scripts first start an INI file is created in the script root folder.
+Only modify the values in there and leave the script files as is, unless you know
+exactly what you're doing.
+
+A list of key codes can be found in AHK's documentation:
+https://www.autohotkey.com/docs/v2/KeyList.htm
 */
 
-
-;___ >>> KEY DEFINITIONS AND SETTINGS (modify these) <<< ________________________________
-
-; - HOW TO -
-; a list of key codes can be found in AHK's documentation:
-; https://www.autohotkey.com/docs/v2/KeyList.htm
-
-; leave the quotation marks "" for key definitions empty if you want to disable a hotkey
-
-; --- ITEM TRANSFER/SELL REPEATER ---
-
-; key to repeat item transfer/selling while held
-keyItemTransRepeat := "MButton"
-
-; --- SKILL TOGGLE ---
-
-; key to toggle skill states
-keySkillToggle := "XButton1"
-; skill 1 key assigned in game on your skill bar
-keySkillToggle1 := "RButton"
-; skill 2
-keySkillToggle2 := "f"
-; skill 3
-keySkillToggle3 := ""
-; skill 4
-keySkillToggle4 := ""
-; skill 5
-keySkillToggle5 := ""
-
-; --- SKILL REPEATER ---
-
-; key to repeat skills while held
-keySkillRepeat := ""
-; skill 1 key assigned in game on your skill bar
-; skill 1 delay between activations, in ms
-keySkillRepeat1 := ""
-delaySkillRepeat1 := 0
-; skill 2
-keySkillRepeat2 := ""
-delaySkillRepeat2 := 0
-; skill 3
-keySkillRepeat3 := ""
-delaySkillRepeat3 := 0
-; skill 4
-keySkillRepeat4 := ""
-delaySkillRepeat4 := 0
-; skill 5
-keySkillRepeat5 := ""
-delaySkillRepeat5 := 0
-
-
-;___ >>> GENERAL SCRIPT SETUP (don't alter) <<< _________________________________________
-
+#Requires AutoHotkey >=2.0
 #SingleInstance Force
+#Include <IniFunctions>
 #HotIf WinActive("ahk_exe Last Epoch.exe")
 HotIfWinActive "ahk_exe Last Epoch.exe"
 
+scriptVersion := 1.2
+TraySetIcon A_ScriptDir "\lib\tray.ico"
+A_IconTip := "Last Epoch Hotkeys v" scriptVersion
+
+iniPath := A_ScriptDir "\LastEpochHotkeys.ini"
+if !FileExist(iniPath) {
+	iniCreate(iniPath)
+}
+
+F5::Reload					; reload script hotkey
 #SuspendExempt
-F5::Reload				; reload script hotkey
-F6::Suspend				; suspend hotkeys hotkey, toggle
+F6::Suspend					; suspend hotkeys hotkey, toggle
 #SuspendExempt False
-
-
-;___ >>> HOTKEY CODE (don't alter) <<< __________________________________________________
+; reset INI file to its default values, also restarts script
+F8::iniReset(iniPath)
 
 numSkills := 5
 
-if (keyItemTransRepeat !== "") {
-	Hotkey keyItemTransRepeat, ItemTransferRepeat
-	ItemTransferRepeat(ThisHotkey) {
-		Delayed() {
-			SendInput "{RButton}"
-		}
-		SendInput "{LShift down}"
-		SetTimer Delayed, 100
-		if (KeyWait(keyItemTransRepeat)) {
-			SendInput "{LShift up}"
-			SetTimer Delayed, 0
-		}
-	}
+keysSkillBar := []
+keysSkillBar.Length := numSkills
+keysSkillBar.InsertAt(1, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot1", "Q"))
+keysSkillBar.InsertAt(2, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot2", "W"))
+keysSkillBar.InsertAt(3, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot3", "E"))
+keysSkillBar.InsertAt(4, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot4", "R"))
+keysSkillBar.InsertAt(5, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot5", "RButton"))
+
+keyItemTransRepeat := iniKeyReadWrite(iniPath, "ItemTransRepeat", "key", "MButton")
+keyItemTransRepeatActive := iniKeyReadWrite(iniPath, "ItemTransRepeat", "enabled", 1)
+
+keySkillToggle := iniKeyReadWrite(iniPath, "SkillToggle", "key", "XButton1")
+keySkillToggleActive := iniKeyReadWrite(iniPath, "SkillToggle", "enabled", 0)
+enableSkillToggle := []
+enableSkillToggle.Length := numSkills
+loop numSkills {
+	enableSkillToggle.InsertAt(A_Index, iniKeyReadWrite(iniPath, "SkillToggle", "enableSlot" A_Index, 0))
 }
 
-if (keySkillToggle !== "") {
-	Hotkey keySkillToggle, ToggleChannelSkill
-	ToggleChannelSkill(ThisHotkey) {
-		static active := false
-		active := !active
-		if (active) {
-			loop numSkills {
-				SendInput "{" keySkillToggle%A_Index% " down}"
-			}
-		} else {
-			loop numSkills {
-				SendInput "{" keySkillToggle%A_Index% " up}"
-			}
-		}
-	}
+keySkillRepeat := iniKeyReadWrite(iniPath, "SkillRepeat", "key", "XButton2")
+keySkillRepeatActive := iniKeyReadWrite(iniPath, "SkillRepeat", "enabled", 0)
+enableSkillRepeat := []
+delaySkillRepeat := []
+enableSkillRepeat.Length := numSkills
+delaySkillRepeat.Length := numSkills
+loop numSkills {
+	enableSkillRepeat.InsertAt(A_Index, iniKeyReadWrite(iniPath, "SkillRepeat", "enableSlot" A_Index, 0))
+}
+loop numSkills {
+	delaySkillRepeat.InsertAt(A_Index, iniKeyReadWrite(iniPath, "SkillRepeat", "delaySlot" A_Index, 1000))
 }
 
-if (keySkillRepeat !== "") {
-	Hotkey keySkillRepeat, SkillRepeater
-	timerArray := []
-	SkillRepeater(ThisHotkey) {
-		Loop numSkills {
-			KeyPressed(A_Index)
-		}
-		if (KeyWait(keySkillRepeat)) {
-			Loop numSkills {
-				KeyReleased(A_Index)
-			}
-		}
-	}
-	KeyPressed(num) {
-		if (delaySkillRepeat%num% == 0) {
-			SendInput "{" keySkillRepeat%num% " down}"
-		} else {
-			SendInput "{" keySkillRepeat%num% "}"
-			timerArray.InsertAt(num-1, SkillTimer(num))
-			timerArray[num-1].Start(delaySkillRepeat%num%)
-		}
-	}
-	KeyReleased(num) {
-		if (delaySkillRepeat%num% == 0) {
-			SendInput "{" keySkillRepeat%num% " up}"
-		} else {
-			timerArray[num-1].Stop()
-		}
-	}
-	class SkillTimer {
-		__New(num) {
-			this.timer := ObjBindMethod(this, "ActivateSkill", num)
-		}
-		Start(delay) {
-			SetTimer this.timer, delay
-		}
-		Stop() {
-			SetTimer this.timer, 0
-		}
-		ActivateSkill(num) {
-			SendInput "{" keySkillRepeat%num% "}"
-		}
-	}
-}
+#Include <HotkeyFunctions>
