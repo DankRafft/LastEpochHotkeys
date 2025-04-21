@@ -2,27 +2,16 @@
 LAST EPOCH HOTKEYS
 an AutoHotkey script
 created by Dank Rafft
-
-- HOW TO -
-a list of key codes can be found in AHK's documentation:
-https://www.autohotkey.com/docs/v2/KeyList.htm
-leave the quotation marks "" for key definitions empty if you want to disable a hotkey
 */
 
 
-;___ >>> GENERAL SCRIPT SETUP (don't alter) <<< _________________________________________
+;___ >>> KEY DEFINITIONS AND SETTINGS (modify these) <<< ________________________________
 
-#SingleInstance Force
-#HotIf WinActive("ahk_exe Last Epoch.exe")
-HotIfWinActive "ahk_exe Last Epoch.exe"
+; - HOW TO -
+; a list of key codes can be found in AHK's documentation:
+; https://www.autohotkey.com/docs/v2/KeyList.htm
 
-F5::Reload				; reload script hotkey
-#SuspendExempt
-F6::Suspend				; suspend hotkeys hotkey, toggle
-#SuspendExempt False
-
-
-;___ >>> KEY DEFINITIONS AND SETTINGS (modify this) <<< _________________________________
+; leave the quotation marks "" for key definitions empty if you want to disable a hotkey
 
 ; --- ITEM TRANSFER/SELL REPEATER ---
 
@@ -39,6 +28,10 @@ keySkillToggle1 := "RButton"
 keySkillToggle2 := "f"
 ; skill 3
 keySkillToggle3 := ""
+; skill 4
+keySkillToggle4 := ""
+; skill 5
+keySkillToggle5 := ""
 
 ; --- SKILL REPEATER ---
 
@@ -54,9 +47,29 @@ delaySkillRepeat2 := 0
 ; skill 3
 keySkillRepeat3 := ""
 delaySkillRepeat3 := 0
+; skill 4
+keySkillRepeat4 := ""
+delaySkillRepeat4 := 0
+; skill 5
+keySkillRepeat5 := ""
+delaySkillRepeat5 := 0
+
+
+;___ >>> GENERAL SCRIPT SETUP (don't alter) <<< _________________________________________
+
+#SingleInstance Force
+#HotIf WinActive("ahk_exe Last Epoch.exe")
+HotIfWinActive "ahk_exe Last Epoch.exe"
+
+#SuspendExempt
+F5::Reload				; reload script hotkey
+F6::Suspend				; suspend hotkeys hotkey, toggle
+#SuspendExempt False
 
 
 ;___ >>> HOTKEY CODE (don't alter) <<< __________________________________________________
+
+numSkills := 5
 
 if (keyItemTransRepeat !== "") {
 	Hotkey keyItemTransRepeat, ItemTransferRepeat
@@ -79,70 +92,58 @@ if (keySkillToggle !== "") {
 		static active := false
 		active := !active
 		if (active) {
-			SendInput "{" keySkillToggle1 " down}"
-			SendInput "{" keySkillToggle2 " down}"
-			SendInput "{" keySkillToggle3 " down}"
-		}
-		Else {
-			SendInput "{" keySkillToggle1 " up}"
-			SendInput "{" keySkillToggle2 " up}"
-			SendInput "{" keySkillToggle3 " up}"
+			loop numSkills {
+				SendInput "{" keySkillToggle%A_Index% " down}"
+			}
+		} else {
+			loop numSkills {
+				SendInput "{" keySkillToggle%A_Index% " up}"
+			}
 		}
 	}
 }
 
 if (keySkillRepeat !== "") {
 	Hotkey keySkillRepeat, SkillRepeater
+	timerArray := []
 	SkillRepeater(ThisHotkey) {
-		if (delaySkillRepeat1 == 0) {
-			SendInput "{" keySkillRepeat1 " down}"
-		}
-		else {
-			SendInput "{" keySkillRepeat1 "}"
-			SetTimer Delayed1, delaySkillRepeat1
-		}
-		if (delaySkillRepeat2 == 0) {
-			SendInput "{" keySkillRepeat2 " down}"
-		}
-		else {
-			SendInput "{" keySkillRepeat2 "}"
-			SetTimer Delayed2, delaySkillRepeat2
-		}
-		if (delaySkillRepeat3 == 0) {
-			SendInput "{" keySkillRepeat3 " down}"
-		}
-		else {
-			SendInput "{" keySkillRepeat3 "}"
-			SetTimer Delayed3, delaySkillRepeat3
+		Loop numSkills {
+			KeyPressed(A_Index)
 		}
 		if (KeyWait(keySkillRepeat)) {
-			if (delaySkillRepeat1 == 0) {
-				SendInput "{" keySkillRepeat1 " up}"
-			}
-			else {
-				SetTimer Delayed1, 0
-			}
-			if (delaySkillRepeat2 == 0) {
-				SendInput "{" keySkillRepeat2 " up}"
-			}
-			else {
-				SetTimer Delayed2, 0
-			}
-			if (delaySkillRepeat3 == 0) {
-				SendInput "{" keySkillRepeat3 " up}"
-			}
-			else {
-				SetTimer Delayed3, 0
+			Loop numSkills {
+				KeyReleased(A_Index)
 			}
 		}
 	}
-	Delayed1() {
-		SendInput "{" keySkillRepeat1 "}"
+	KeyPressed(num) {
+		if (delaySkillRepeat%num% == 0) {
+			SendInput "{" keySkillRepeat%num% " down}"
+		} else {
+			SendInput "{" keySkillRepeat%num% "}"
+			timerArray.InsertAt(num-1, SkillTimer(num))
+			timerArray[num-1].Start(delaySkillRepeat%num%)
+		}
 	}
-	Delayed2() {
-		SendInput "{" keySkillRepeat2 "}"
+	KeyReleased(num) {
+		if (delaySkillRepeat%num% == 0) {
+			SendInput "{" keySkillRepeat%num% " up}"
+		} else {
+			timerArray[num-1].Stop()
+		}
 	}
-	Delayed3() {
-		SendInput "{" keySkillRepeat3 "}"
+	class SkillTimer {
+		__New(num) {
+			this.timer := ObjBindMethod(this, "ActivateSkill", num)
+		}
+		Start(delay) {
+			SetTimer this.timer, delay
+		}
+		Stop() {
+			SetTimer this.timer, 0
+		}
+		ActivateSkill(num) {
+			SendInput "{" keySkillRepeat%num% "}"
+		}
 	}
 }
