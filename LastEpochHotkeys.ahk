@@ -39,10 +39,10 @@ numSkills := 5
 
 keysSkillBar := []
 keysSkillBar.Length := numSkills
-keysSkillBar.InsertAt(1, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot1", "Q"))
-keysSkillBar.InsertAt(2, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot2", "W"))
-keysSkillBar.InsertAt(3, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot3", "E"))
-keysSkillBar.InsertAt(4, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot4", "R"))
+keysSkillBar.InsertAt(1, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot1", "q"))
+keysSkillBar.InsertAt(2, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot2", "w"))
+keysSkillBar.InsertAt(3, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot3", "e"))
+keysSkillBar.InsertAt(4, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot4", "r"))
 keysSkillBar.InsertAt(5, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot5", "RButton"))
 
 keyItemTransRepeat := iniKeyReadWrite(iniPath, "ItemTransRepeat", "key", "MButton")
