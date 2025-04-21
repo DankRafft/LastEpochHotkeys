@@ -12,32 +12,30 @@ Currently the script provides the following macros.
 - Skill Toggle: Press a button and make your skills repeat indefinitely until you toggle it off again. No more "Numlock trick" or physically holding down a button required.
 - Skill Repeat: While the previous Skill Toggle, as the name suggests, toggles skill use, this Skill Repeat is more nuanced. The skills repeat for as long as you hold down the defined key. And you can also set a delay between activations in case you don't want a skill to activate right when it is off cooldown.
 
-If you feel like this list is missing an important feature, feel free to suggest it via the Posts section. Maybe you're lucky and I decide to implement it.
+If you feel like this list is missing an important feature, feel free to suggest it via the Issues section. Maybe you're lucky and I decide to implement it.
 
 
 ## INSTALL
 
-1. First you need to install [AutoHotkey﻿ (AHK) v2.0](https://www.autohotkey.com/). Without it, this script won't run. It also won't run with AHK v1.1.
-2. Once installed, download the archive from the Files section.
-3. Extract the 7zip archive. It contains the file LastEpochHotkeys.ahk.
-4. If your install of AHK works you should be able to execute that script. BUT before you do that I recommend that you configure the script as explained below.
+1. First you need to install [AutoHotkey (AHK) v2.0](https://www.autohotkey.com/). Without it, this script won't run. It also won't run with AHK v1.1.
+2. Once installed, download the archive from the Code button above by selecting "Download ZIP".
+3. Extract the Zip archive. You need the file ***LastEpochHotkeys.ahk*** and the folder ***lib*** from it.
+4. If your install of AHK works you should be able to execute the ***LastEpochHotkeys.ahk***.
 
 
 ## SETUP AND USE
 
-If you just downloaded the script I recommend that you configure it first before running it. Otherwise it might not work for you. For that purpose you need a text editor app. Simply open the LastEpochHotkeys.ahk with it. Editors that provide syntax highlighting for AHK scripts, and thus improve readability, are listed in this article:
-https://www.autohotkey.com/docs/v2/misc/Editors.htm
+If you just downloaded the script you have to configure it. For that purpose you need a text editor app. Simply open the ***LastEpochHotkeys.ini***, that got created upon the script's start, with it.
 
-The screenshot above shows the content of the file as seen within Visual Studio Code but for the following guide your choice of an editor doesn't matter.
-
-1. At the very top of the script you can find some basic tips on how to configure it.
+1. At the very top of the INI file you can find some basic tips on how to configure it.
 2. Follow the link to [List of Keys](https://www.autohotkey.com/docs/v2/KeyList.htm) so that you learn what key codes you have to use in order to assign a key on your keyboard or mouse.
-3. You should modify the section starting from line 25. Make sure you read all the included notes (comments). There you can put in the key codes for the keys you want to define, set delays, etc.
+3. Put in your preferred key codes for the keys you want to define, set delays, etc.
 4. Once you're done with your setup, save the file and close it.
-5. Then you can run it. On the right side of your task bar this icon ﻿ should appear, signaling that the script is running.
+5. Then, if the script is still running, restart it so that it applies your changes to the settings. On the right side of your task bar a small Last Epoch tray icon should appear, signaling that the script is running.
 6. You can use the macros in game now.
 
-When in game you can also restart the script and pause hotkey execution by a press of a button. The defaults are as follows:
+When in game you can also directly influence some parts of the script. These are the hotkeys:
 
 - F5 will restart the script. This can be useful if something breaks, isn't working as expected or you modified the settings while the script was running and you want to update them.
 - F6 will suspend hotkey execution. Already running processes will continue to run. This can be useful if you have to use a hotkey for another functionality in game.
+- F8 will reset the INI file to its default state, removing all your changes. Use it if you made changes that broke the script or if you don't like your changes and want to start from scratch. The same happens when you delete the ***LastEpochHotkeys.ini*** in File Explorer and (re-)start the script.
