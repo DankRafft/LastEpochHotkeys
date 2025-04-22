@@ -21,17 +21,9 @@ if (keySkillToggleActive) {
 		static active := false
 		active := !active
 		if (active) {
-			loop numSkills {
-				if (enableSkillToggle[A_Index]) {
-					SendInput "{" keysSkillBar[A_Index] " down}"
-				}
-			}
+			KeyPress(enableSkillToggle, delaySkillToggle)
 		} else {
-			loop numSkills {
-				if (enableSkillToggle[A_Index]) {
-					SendInput "{" keysSkillBar[A_Index] " up}"
-				}
-			}
+			KeyRelease(enableSkillToggle, delaySkillToggle)
 		}
 	}
 }
@@ -39,50 +31,56 @@ if (keySkillToggleActive) {
 ; Skill Repeater
 if (keySkillRepeatActive) {
 	Hotkey keySkillRepeat, SkillRepeater
-	timerArray := []
-	timerArray.Length := numSkills
 	SkillRepeater(ThisHotkey) {
-		Loop numSkills {
-            if (enableSkillRepeat[A_Index]) {
-                KeyPress(A_Index)
-            }
-		}
+		KeyPress(enableSkillRepeat, delaySkillRepeat)
 		if (KeyWait(keySkillRepeat)) {
-			Loop numSkills {
-                if (enableSkillRepeat[A_Index]) {
-				    KeyRelease(A_Index)
-                }
+			KeyRelease(enableSkillRepeat, delaySkillRepeat)
+		}
+	}
+}
+
+; general stuff
+
+timerArray := []
+timerArray.Length := numSkills
+
+KeyPress(enabled, delay) {
+	Loop numSkills {
+		if (enabled[A_Index]) {
+			if (delay[A_Index] == 0) {
+				SendInput "{" keysSkillBar[A_Index] " down}"
+			} else {
+				SendInput "{" keysSkillBar[A_Index] "}"
+				timerArray.InsertAt(A_Index, SkillTimer(A_Index))
+				timerArray[A_Index].Start(delay[A_Index])
 			}
 		}
 	}
-	KeyPress(num) {
-		if (delaySkillRepeat[num] == 0) {
-			SendInput "{" keysSkillBar[num] " down}"
-		} else {
-			SendInput "{" keysSkillBar[num] "}"
-			timerArray.InsertAt(num, SkillTimer(num))
-			timerArray[num].Start(delaySkillRepeat[num])
+}
+
+KeyRelease(enabled, delay) {
+	Loop numSkills {
+		if (enabled[A_Index]) {
+			if (delay[A_Index] == 0) {
+				SendInput "{" keysSkillBar[A_Index] " up}"
+			} else {
+				timerArray[A_Index].Stop()
+			}
 		}
 	}
-	KeyRelease(num) {
-		if (delaySkillRepeat[num] == 0) {
-			SendInput "{" keysSkillBar[num] " up}"
-		} else {
-			timerArray[num].Stop()
-		}
+}
+
+class SkillTimer {
+	__New(num) {
+		this.timer := ObjBindMethod(this, "ActivateSkill", num)
 	}
-	class SkillTimer {
-		__New(num) {
-			this.timer := ObjBindMethod(this, "ActivateSkill", num)
-		}
-		Start(delay) {
-			SetTimer this.timer, delay
-		}
-		Stop() {
-			SetTimer this.timer, 0
-		}
-		ActivateSkill(num) {
-			SendInput "{" keysSkillBar[num] "}"
-		}
+	Start(delay) {
+		SetTimer this.timer, delay
+	}
+	Stop() {
+		SetTimer this.timer, 0
+	}
+	ActivateSkill(num) {
+		SendInput "{" keysSkillBar[num] "}"
 	}
 }

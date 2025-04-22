@@ -13,6 +13,8 @@ A list of key codes can be found in AHK's documentation:
 https://www.autohotkey.com/docs/v2/KeyList.htm
 */
 
+; script setup
+
 #Requires AutoHotkey >=2.0
 #SingleInstance Force
 #Include <IniFunctions>
@@ -28,12 +30,16 @@ if !FileExist(iniPath) {
 	iniCreate(iniPath)
 }
 
+; script control keys
+
 F5::Reload					; reload script hotkey
 #SuspendExempt
 F6::Suspend					; suspend hotkeys hotkey, toggle
 #SuspendExempt False
 ; reset INI file to its default values, also restarts script
 F8::iniReset(iniPath)
+
+; hotkey variables and INI setup
 
 numSkills := 5
 
@@ -51,9 +57,14 @@ keyItemTransRepeatActive := iniKeyReadWrite(iniPath, "ItemTransRepeat", "enabled
 keySkillToggle := iniKeyReadWrite(iniPath, "SkillToggle", "key", "XButton1")
 keySkillToggleActive := iniKeyReadWrite(iniPath, "SkillToggle", "enabled", 0)
 enableSkillToggle := []
+delaySkillToggle := []
 enableSkillToggle.Length := numSkills
+delaySkillToggle.Length := numSkills
 loop numSkills {
 	enableSkillToggle.InsertAt(A_Index, iniKeyReadWrite(iniPath, "SkillToggle", "enableSlot" A_Index, 0))
+}
+loop numSkills {
+	delaySkillToggle.InsertAt(A_Index, iniKeyReadWrite(iniPath, "SkillToggle", "delaySlot" A_Index, 0))
 }
 
 keySkillRepeat := iniKeyReadWrite(iniPath, "SkillRepeat", "key", "XButton2")

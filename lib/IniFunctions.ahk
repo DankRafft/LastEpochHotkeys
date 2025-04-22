@@ -21,7 +21,7 @@ iniCreate(Filename) {
     ; is disabled, while a 1 enables it.
     ; Delays are measured in ms, so a value of 1000 is a second.
     ; A delay of 0 disables the delay and keeps the key pressed
-    ; for as long as you hold down the hotkey.
+    ; for as long as the hotkey is active.
     ; Changes to this file require a restart/reload of the script.
     )", Filename, "HOW TO USE"
 }
