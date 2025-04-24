@@ -80,4 +80,11 @@ loop numSkills {
 	delaySkillRepeat.InsertAt(A_Index, iniKeyReadWrite(iniPath, "SkillRepeat", "delaySlot" A_Index, 1000))
 }
 
+keyPortal := iniKeyReadWrite(iniPath, "Portal", "key", "+t")
+keyPortalActive := iniKeyReadWrite(iniPath, "Portal", "enabled", 0)
+keyPortalGame := iniKeyReadWrite(iniPath, "Portal", "keyGame", "t")
+delayPortClick := iniKeyReadWrite(iniPath, "Portal", "delayClick", 1500)
+winModX := iniKeyReadWrite(iniPath, "Portal", "winModX", 0.003)
+winModY := iniKeyReadWrite(iniPath, "Portal", "winModY", 0.09)
+
 #Include <HotkeyFunctions>

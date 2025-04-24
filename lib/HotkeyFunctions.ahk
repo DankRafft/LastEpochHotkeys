@@ -1,5 +1,5 @@
 ; Item Transfer/Selling Repeater
-if (keyItemTransRepeatActive) {
+if (keyItemTransRepeatActive && keyItemTransRepeat != "") {
 	Hotkey keyItemTransRepeat, ItemTransferRepeat
 	ItemTransferRepeat(ThisHotkey) {
 		Delayed() {
@@ -15,7 +15,7 @@ if (keyItemTransRepeatActive) {
 }
 
 ; Skill Toggle
-if (keySkillToggleActive) {
+if (keySkillToggleActive && keySkillToggle != "") {
 	Hotkey keySkillToggle, ToggleChannelSkill
 	ToggleChannelSkill(ThisHotkey) {
 		static active := false
@@ -29,13 +29,29 @@ if (keySkillToggleActive) {
 }
 
 ; Skill Repeater
-if (keySkillRepeatActive) {
+if (keySkillRepeatActive && keySkillRepeat != "") {
 	Hotkey keySkillRepeat, SkillRepeater
 	SkillRepeater(ThisHotkey) {
 		KeyPress(enableSkillRepeat, delaySkillRepeat)
 		if (KeyWait(keySkillRepeat)) {
 			KeyRelease(enableSkillRepeat, delaySkillRepeat)
 		}
+	}
+}
+
+; Teleport
+if (keyPortalActive && keyPortal != "") {
+	Hotkey keyPortal, Portal
+	Portal(ThisHotkey) {
+		WinGetPos &winX, &winY, &winW, &winH, "A"
+		xPortal := winX + winW / 2 - winW * winModX
+		yPortal := winY + winH / 2 - winH * winModY
+		MouseGetPos &tempX, &tempY
+		SendInput keyPortalGame
+		Sleep delayPortClick
+		Click xPortal, yPortal
+		Sleep 150
+		Click tempX, tempY, 0
 	}
 }
 
