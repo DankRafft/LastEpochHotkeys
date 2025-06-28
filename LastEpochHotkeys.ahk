@@ -18,8 +18,8 @@ https://www.autohotkey.com/docs/v2/KeyList.htm
 #Requires AutoHotkey >=2.0
 #SingleInstance Force
 #Include <IniFunctions>
-#HotIf WinActive("ahk_exe Last Epoch.exe")
-HotIfWinActive "ahk_exe Last Epoch.exe"
+#HotIf WinActive("Last Epoch ahk_class UnityWndClass")
+HotIfWinActive "Last Epoch ahk_class UnityWndClass"
 
 scriptVersion := 1.2
 TraySetIcon A_ScriptDir "\lib\tray.ico"
