@@ -7,7 +7,7 @@ if (keyItemTransRepeatActive && keyItemTransRepeat != "") {
 		}
 		SendInput "{LShift down}"
 		SetTimer Delayed, 100
-		if (KeyWait(keyItemTransRepeat)) {
+		if (KeyWait(keyItemTransRepeatStripped)) {
 			SendInput "{LShift up}"
 			SetTimer Delayed, 0
 		}
@@ -16,7 +16,11 @@ if (keyItemTransRepeatActive && keyItemTransRepeat != "") {
 
 ; Skill Toggle
 if (keySkillToggleActive && keySkillToggle != "") {
-	Hotkey keySkillToggle, ToggleChannelSkill
+	if (keySkillRepeatNative) {
+		Hotkey "~" keySkillToggle, ToggleChannelSkill
+	} else {
+		Hotkey keySkillToggle, ToggleChannelSkill
+	}
 	ToggleChannelSkill(ThisHotkey) {
 		static active := false
 		active := !active
@@ -30,10 +34,14 @@ if (keySkillToggleActive && keySkillToggle != "") {
 
 ; Skill Repeater
 if (keySkillRepeatActive && keySkillRepeat != "") {
-	Hotkey keySkillRepeat, SkillRepeater
+	if (keySkillRepeatNative) {
+		Hotkey "~" keySkillRepeat, SkillRepeater
+	} else {
+		Hotkey keySkillRepeat, SkillRepeater
+	}
 	SkillRepeater(ThisHotkey) {
 		KeyPress(enableSkillRepeat, delaySkillRepeat)
-		if (KeyWait(keySkillRepeat)) {
+		if (KeyWait(keySkillRepeatStripped)) {
 			KeyRelease(enableSkillRepeat, delaySkillRepeat)
 		}
 	}
@@ -99,4 +107,9 @@ class SkillTimer {
 	ActivateSkill(num) {
 		SendInput "{" keysSkillBar[num] "}"
 	}
+}
+
+
+StripHotkeyModifiers(hotkey) {
+    return RegExReplace(hotkey, "(?:[$*~<>^+#!]+|\S+ +& +)?(\S+).*", "$1")
 }

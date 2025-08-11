@@ -52,10 +52,12 @@ keysSkillBar.InsertAt(4, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot4", "r
 keysSkillBar.InsertAt(5, iniKeyReadWrite(iniPath, "SkillBarKeys", "keySlot5", "RButton"))
 
 keyItemTransRepeat := iniKeyReadWrite(iniPath, "ItemTransRepeat", "key", "MButton")
+keyItemTransRepeatStripped := StripHotkeyModifiers(keyItemTransRepeat)
 keyItemTransRepeatActive := iniKeyReadWrite(iniPath, "ItemTransRepeat", "enabled", 1)
 
 keySkillToggle := iniKeyReadWrite(iniPath, "SkillToggle", "key", "XButton1")
 keySkillToggleActive := iniKeyReadWrite(iniPath, "SkillToggle", "enabled", 0)
+keySkillToggleNative := iniKeyReadWrite(iniPath, "SkillToggle", "native", 0)
 enableSkillToggle := []
 delaySkillToggle := []
 enableSkillToggle.Length := numSkills
@@ -68,7 +70,9 @@ loop numSkills {
 }
 
 keySkillRepeat := iniKeyReadWrite(iniPath, "SkillRepeat", "key", "XButton2")
+keySkillRepeatStripped := StripHotkeyModifiers(keySkillRepeat)
 keySkillRepeatActive := iniKeyReadWrite(iniPath, "SkillRepeat", "enabled", 0)
+keySkillRepeatNative := iniKeyReadWrite(iniPath, "SkillRepeat", "native", 1)
 enableSkillRepeat := []
 delaySkillRepeat := []
 enableSkillRepeat.Length := numSkills
